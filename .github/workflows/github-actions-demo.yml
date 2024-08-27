@@ -34,7 +34,12 @@ jobs:
         git checkout -b "cherry-pick-${{ env.commit_sha }}"
 
     - name: Cherry-pick the commit onto the new branch, using OURS
-      run: git cherry-pick ${{ env.commit_sha }} || (git checkout --ours . && git cherry-pick --continue)
+      run: |
+        git cherry-pick ${{ env.commit_sha }} || (
+          git checkout --ours . &&
+          git add . &&  # Mark the conflicts as resolved
+          git cherry-pick --continue
+        )
 
     - name: Push the new branch to origin
       env:
