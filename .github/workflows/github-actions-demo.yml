@@ -27,25 +27,25 @@ jobs:
       id: get_commit_sha
       run: echo "commit_sha=$(echo ${{ github.event.head_commit.id }})" >> $GITHUB_ENV
 
-    - name: Cherry-pick the commit onto eesha/creating_the_github_actions
-      run: |
-        git checkout eesha/creating_the_github_actions
-        git pull origin eesha/creating_the_github_actions
-        git cherry-pick ${{ env.commit_sha }}
-        git push origin masterV
+    # - name: Cherry-pick the commit onto eesha/creating_the_github_actions
+    #   run: |
+    #     git checkout eesha/creating_the_github_actions
+    #     git pull origin eesha/creating_the_github_actions
+    #     git cherry-pick ${{ env.commit_sha }}
+    #     git push origin masterV
 
-    - name: Create Pull Request for the cherry-picked commit
-      id: create_pr
-      uses: peter-evans/create-pull-request@v5
-      with:
-        source_branch: eesha/creating_the_github_actions
-        target_branch: eesha/creating_the_github_actions
-        title: 'Cherry-pick commit ${{ env.commit_sha }} from release branch to eesha/creating_the_github_actions'
-        body: |
-          This PR cherry-picks commit ${{ env.commit_sha }} from the `release-*` branch into the `eesha/creating_the_github_actions` branch.
-        branch: 'cherry-pick-${{ env.commit_sha }}'
-        labels: 'automated-pr'
+    # - name: Create Pull Request for the cherry-picked commit
+    #   id: create_pr
+    #   uses: peter-evans/create-pull-request@v5
+    #   with:
+    #     source_branch: eesha/creating_the_github_actions
+    #     target_branch: eesha/creating_the_github_actions
+    #     title: 'Cherry-pick commit ${{ env.commit_sha }} from release branch to eesha/creating_the_github_actions'
+    #     body: |
+    #       This PR cherry-picks commit ${{ env.commit_sha }} from the `release-*` branch into the `eesha/creating_the_github_actions` branch.
+    #     branch: 'cherry-pick-${{ env.commit_sha }}'
+    #     labels: 'automated-pr'
 
-    - name: Output Pull Request URL
-      run: echo "Pull request URL ${{ steps.create_pr.outputs.pull-request-url }}"
+    # - name: Output Pull Request URL
+    #   run: echo "Pull request URL ${{ steps.create_pr.outputs.pull-request-url }}"
 
