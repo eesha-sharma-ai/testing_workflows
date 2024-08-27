@@ -8,8 +8,7 @@ on:
 jobs:
   cherry-pick-commit-to-eesha-creating_the_github_actions:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
+    permissions: write-all|read-all
 
     steps:
     - name: Checkout the code
