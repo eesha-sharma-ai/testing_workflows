@@ -42,7 +42,7 @@ jobs:
     - name: Cherry-pick the commit onto the new branch
       run: |
         git cherry-pick ${{ env.commit_sha }} || {
-          git checkout --ours . &&
+          git checkout --theirs . &&
           git add . &&
           git cherry-pick --continue || git cherry-pick --skip
         }
