@@ -1,4 +1,4 @@
-name: PR Creation Automation from Release to eesha/creating_the_github_actions
+name: PR Creation Automation from Release to Main
 
 on:
   push:
@@ -39,6 +39,7 @@ jobs:
           git cherry-pick --continue || git cherry-pick --skip
         }
 
+    # make the name of the branch a variable
     - name: Push the new branch to origin
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -47,10 +48,10 @@ jobs:
 
     - name: Create Pull Request for the cherry-picked commit
       id: create_pr
-      uses: peter-evans/create-pull-request@v5
+      uses: peter-evans/create-pull-request@v6
       with:
-        source_branch: "cherry-pick-${{ env.commit_sha }}"
-        target_branch: main
+        branch: "cherry-pick-${{ env.commit_sha }}"
+        base: main
         title: "Cherry-pick commit ${{ env.commit_sha }} from release branch to main"
         body: |
           This PR cherry-picks commit ${{ env.commit_sha }} from the release branch into the main branch.
