@@ -6,7 +6,7 @@ on:
       - 'release-*'
 
 jobs:
-  cherry-pick-commit-to-eesha-creating_the_github_actions:
+  cherry-pick-commit-to-main:
     runs-on: ubuntu-latest
     permissions: write-all
 
@@ -21,9 +21,16 @@ jobs:
         git config user.name "github-actions"
         git config user.email "github-actions@github.com"
 
-    - name: Get the commit SHA from the push event
+    - name: Extract Commit SHA from the push event
       id: get_commit_sha
       run: echo "commit_sha=${{ github.event.head_commit.id }}" >> $GITHUB_ENV
+
+
+    - name: Extract Branch Name
+      id: extract_branch_name
+      run: |
+        branch_name=${github.ref#refs/heads/}
+        echo "branch_name=${branch_name}" >> $GITHUB_ENV
 
     - name: Create a new branch for cherry-picking
       run: |
@@ -52,10 +59,9 @@ jobs:
       with:
         branch: "cherry-pick-${{ env.commit_sha }}"
         base: main
-        title: "Cherry-pick commit ${{ env.commit_sha }} from release branch to main"
+        title: "Cherry-pick commit ${{ env.commit_sha }} from ${{ env.branch_name }} to main"
         body: |
           This PR cherry-picks commit ${{ env.commit_sha }} from the release branch into the main branch.
-        branch: "cherry-pick-${{ env.commit_sha }}"
         labels: "automated-pr"
 
     # - name: Output Pull Request URL
