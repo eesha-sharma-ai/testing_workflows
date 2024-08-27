@@ -38,7 +38,7 @@ jobs:
         git cherry-pick ${{ env.commit_sha }} || (
           git checkout --ours . &&
           git add . &&  # Mark the conflicts as resolved
-          git cherry-pick --continue
+          git cherry-pick --continue || git cherry-pick --skip
         )
 
     - name: Push the new branch to origin
