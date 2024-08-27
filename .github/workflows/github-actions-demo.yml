@@ -9,7 +9,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  cherry-pick-commit-to-eesha/creating_the_github_actions:
+  cherry-pick-commit-to-eesha-creating_the_github_actions:
     runs-on: ubuntu-latest
 
     steps:
