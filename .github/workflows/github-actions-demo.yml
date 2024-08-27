@@ -1,4 +1,4 @@
-name: PR Creation Automation from Release to Main
+name: PR Creation Automation from Release to eesha/creating_the_github_actions
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  cherry-pick-commit-to-main:
+  cherry-pick-commit-to-eesha/creating_the_github_actions:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,10 +27,10 @@ jobs:
       id: get_commit_sha
       run: echo "commit_sha=$(echo ${{ github.event.head_commit.id }})" >> $GITHUB_ENV
 
-    - name: Cherry-pick the commit onto main
+    - name: Cherry-pick the commit onto eesha/creating_the_github_actions
       run: |
-        git checkout main
-        git pull origin main
+        git checkout eesha/creating_the_github_actions
+        git pull origin eesha/creating_the_github_actions
         git cherry-pick ${{ env.commit_sha }}
         git push origin masterV
 
@@ -38,11 +38,11 @@ jobs:
       id: create_pr
       uses: peter-evans/create-pull-request@v5
       with:
-        source_branch: main
-        target_branch: main
-        title: 'Cherry-pick commit ${{ env.commit_sha }} from release branch to main'
+        source_branch: eesha/creating_the_github_actions
+        target_branch: eesha/creating_the_github_actions
+        title: 'Cherry-pick commit ${{ env.commit_sha }} from release branch to eesha/creating_the_github_actions'
         body: |
-          This PR cherry-picks commit ${{ env.commit_sha }} from the `release-*` branch into the `main` branch.
+          This PR cherry-picks commit ${{ env.commit_sha }} from the `release-*` branch into the `eesha/creating_the_github_actions` branch.
         branch: 'cherry-pick-${{ env.commit_sha }}'
         labels: 'automated-pr'
 
