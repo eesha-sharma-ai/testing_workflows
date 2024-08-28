@@ -58,8 +58,8 @@ jobs:
       id: create_pr
       uses: peter-evans/create-pull-request@v6
       with:
-        branch: cherry-pick-${{ env.commit_sha }}
-        base: main
+        branch: main
+        base: cherry-pick-${{ env.commit_sha }}
         title: Cherry-pick commit ${{ env.commit_sha }} from ${{ env.branch_name }} to main
         body: |
           This PR cherry-picks commit ${{ env.commit_sha }} from ${{ env.branch_name }} into the main branch.
