@@ -8,7 +8,9 @@ on:
 jobs:
   cherry-pick-commit-to-main:
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      pull-requests: write
+      contents: write
 
     steps:
     - name: Checkout the code
@@ -54,18 +56,18 @@ jobs:
       run: |
         git push origin cherry-pick-${{ env.commit_sha }}
 
-    - name: Create Pull Request for the cherry-picked commit
-      id: create_pr
-      uses: peter-evans/create-pull-request@v6
-      with:
-        branch: main
-        base: cherry-pick-${{ env.commit_sha }}
-        title: Cherry-pick commit ${{ env.commit_sha }} from ${{ env.branch_name }} to main
-        body: |
-          This PR cherry-picks commit ${{ env.commit_sha }} from ${{ env.branch_name }} into the main branch.
-        labels: automated-pr
+    # - name: Create Pull Request for the cherry-picked commit
+    #   id: create_pr
+    #   uses: peter-evans/create-pull-request@v6
+    #   with:
+    #     branch: cherry-pick-${{ env.commit_sha }}
+    #     base: main
+    #     title: Cherry-pick commit ${{ env.commit_sha }} from ${{ env.branch_name }} to main
+    #     body: |
+    #       This PR cherry-picks commit ${{ env.commit_sha }} from ${{ env.branch_name }} into the main branch.
+    #     labels: automated-pr
 
-    - name: Output Pull Request URL
-      run: echo "Pull request URL ${{ steps.create_pr.outputs.pull-request-url }}"
+    # - name: Output Pull Request URL
+    #   run: echo "Pull request URL ${{ steps.create_pr.outputs.pull-request-url }}"
 
 
