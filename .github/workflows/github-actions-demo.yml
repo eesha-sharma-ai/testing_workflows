@@ -54,8 +54,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PAT }}
       run: |
-        git push origin cherry-pick-${{ env.commit_sha }}
         echo "${{ secrets.PAT }}"
+        git push origin cherry-pick-${{ env.commit_sha }}
 
     # - name: Create Pull Request for the cherry-picked commit
     #   id: create_pr
