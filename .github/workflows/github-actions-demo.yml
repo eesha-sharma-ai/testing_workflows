@@ -1,16 +1,14 @@
-name: PR Creation Automation from Release to eesha/creating_the_github_actions
+name: PR Creation Automation from Release to Main
 
 on:
   push:
     branches:
       - 'release-*'
 
-permissions:
-  pull-requests: write
-
 jobs:
-  cherry-pick-commit-to-eesha/creating_the_github_actions:
+  cherry-pick-commit-to-main:
     runs-on: ubuntu-latest
+    permissions: write-all
 
     steps:
     - name: Checkout the code
@@ -23,29 +21,51 @@ jobs:
         git config user.name "github-actions"
         git config user.email "github-actions@github.com"
 
-    - name: Get the commit SHA from the push event
+    - name: Extract Commit SHA from the push event
       id: get_commit_sha
-      run: echo "commit_sha=$(echo ${{ github.event.head_commit.id }})" >> $GITHUB_ENV
+      run: echo "commit_sha=${{ github.event.head_commit.id }}" >> $GITHUB_ENV
 
-    # - name: Cherry-pick the commit onto eesha/creating_the_github_actions
-    #   run: |
-    #     git checkout eesha/creating_the_github_actions
-    #     git pull origin eesha/creating_the_github_actions
-    #     git cherry-pick ${{ env.commit_sha }}
-    #     git push origin masterV
 
-    # - name: Create Pull Request for the cherry-picked commit
-    #   id: create_pr
-    #   uses: peter-evans/create-pull-request@v5
-    #   with:
-    #     source_branch: eesha/creating_the_github_actions
-    #     target_branch: eesha/creating_the_github_actions
-    #     title: 'Cherry-pick commit ${{ env.commit_sha }} from release branch to eesha/creating_the_github_actions'
-    #     body: |
-    #       This PR cherry-picks commit ${{ env.commit_sha }} from the `release-*` branch into the `eesha/creating_the_github_actions` branch.
-    #     branch: 'cherry-pick-${{ env.commit_sha }}'
-    #     labels: 'automated-pr'
+    - name: Extract Branch Name
+      id: extract_branch_name
+      run: |
+        branch_name=${{ github.ref }}
+        branch_name=${branch_name#refs/heads/}
+        echo "branch_name=${branch_name}" >> $GITHUB_ENV
 
-    # - name: Output Pull Request URL
-    #   run: echo "Pull request URL ${{ steps.create_pr.outputs.pull-request-url }}"
+    - name: Create a new branch for cherry-picking
+      run: |
+        git checkout main
+        git pull origin main
+        git checkout -b "cherry-pick-${{ env.commit_sha }}"
+
+    - name: Cherry-pick the commit onto the new branch
+      run: |
+        git cherry-pick ${{ env.commit_sha }} || {
+          git checkout --theirs . &&
+          git add . &&
+          git cherry-pick --continue || git cherry-pick --skip
+        }
+
+    # make the name of the branch a variable
+    - name: Push the new branch to origin
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git push origin cherry-pick-${{ env.commit_sha }}
+
+    - name: Create Pull Request for the cherry-picked commit
+      id: create_pr
+      uses: peter-evans/create-pull-request@v6
+      with:
+        branch: main
+        base: cherry-pick-${{ env.commit_sha }}
+        title: Cherry-pick commit ${{ env.commit_sha }} from ${{ env.branch_name }} to main
+        body: |
+          This PR cherry-picks commit ${{ env.commit_sha }} from ${{ env.branch_name }} into the main branch.
+        labels: automated-pr
+
+    - name: Output Pull Request URL
+      run: echo "Pull request URL ${{ steps.create_pr.outputs.pull-request-url }}"
+
 
