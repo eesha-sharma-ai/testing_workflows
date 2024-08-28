@@ -51,8 +51,8 @@ jobs:
 
     # make the name of the branch a variable
     - name: Push the new branch to origin
-      env:
-        GITHUB_TOKEN: ${{ secrets.PAT }}
+      with:
+        token: ${{ secrets.PAT }}
       run: |
         echo "${{ secrets.PAT }}"
         git push origin cherry-pick-${{ env.commit_sha }}
