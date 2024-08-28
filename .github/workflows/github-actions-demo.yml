@@ -60,9 +60,10 @@ jobs:
       id: create_pr
       uses: peter-evans/create-pull-request@v6
       with:
+        token: ${{ secrets.PAT }}
         branch: cherry-pick-${{ env.commit_sha }}
-        base: main
         title: Cherry-pick commit ${{ env.commit_sha }} from ${{ env.branch_name }} to main
+        commit-message: Cherry pick!
         body: |
           This PR cherry-picks commit ${{ env.commit_sha }} from ${{ env.branch_name }} into the main branch.
         labels: automated-pr
