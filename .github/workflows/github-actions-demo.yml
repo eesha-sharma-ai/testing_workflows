@@ -56,25 +56,43 @@ jobs:
       run: |
         git push origin cherry-pick-${{ env.commit_sha }}
 
-    - name: Create Pull Request for the cherry-picked commit
-      id: create_pr
-      uses: peter-evans/create-pull-request@v6
-      with:
-        token: ${{ secrets.PAT }}
-        branch: main
-        base: cherry-pick-${{ env.commit_sha }}
-        title: Cherry-pick commit ${{ env.commit_sha }} from ${{ env.branch_name }} to main
-        commit-message: Cherry pick!
-        body: |
-          This PR cherry-picks commit ${{ env.commit_sha }} from ${{ env.branch_name }} into the main branch.
-        labels: automated-pr
+    - name: Set up GitHub CLI
+      run: sudo apt-get install gh
 
-    - name: Output Pull Request URL
+    - name: Authenticate with GitHub CLI
+      run: gh auth login --with-token <<< ${{ secrets.PAT }}
+
+    - name: Create Pull Request
       run: |
-        echo "Pull Request Number: ${{ steps.create_pr.outputs.pull_request.number }}"
-        echo "Pull Request URL: ${{ steps.create_pr.outputs.pull_request.html_url }}"
-        echo "Pull Request Operation: ${{ steps.create_pr.outputs.action }}"
-        echo "Pull Request Head SHA: ${{ steps.create_pr.outputs.pull_request.head.sha }}"
-        echo "Pull Request Branch: ${{ steps.create_pr.outputs.pull_request.head.ref }} dummy change"
+        gh pr create \
+          --title "Cherry-pick commit ${{ env.commit_sha }} to main" \
+          --body "This PR cherry-picks commit ${{ env.commit_sha }} from cherry-pick-${{ env.commit_sha }} into the main branch." \
+          --base main \
+          --head cherry-pick-${{ env.commit_sha }} \
+          --label "automated-pr" \
+          --draft
+
+    # - name: Create Pull Request for the cherry-picked commit
+    #   id: create_pr
+    #   # uses: peter-evans/create-pull-request@v6
+    #   # with:
+    #   #   token: ${{ secrets.PAT }}
+    #   #   base: main
+    #   #   # branch: main # this is the branch u want to merge the PR INTO
+    #   #   # base: cherry-pick-${{ env.commit_sha }} # its swapped! the base is the branch u want to pr FROM
+    #   #   title: Cherry-pick commit ${{ env.commit_sha }} from ${{ env.branch_name }} to main
+    #   #   commit-message: Cherry pick!
+    #   #   body: |
+    #   #     This PR cherry-picks commit ${{ env.commit_sha }} from ${{ env.branch_name }} into the main branch.
+    #   #   labels: automated-pr
+    #   #   draft: true
+
+    # - name: Output Pull Request URL
+    #   run: |
+    #     echo "Pull Request Number: ${{ steps.create_pr.outputs.pull_request.number }}"
+    #     echo "Pull Request URL: ${{ steps.create_pr.outputs.pull_request.html_url }}"
+    #     echo "Pull Request Operation: ${{ steps.create_pr.outputs.action }}"
+    #     echo "Pull Request Head SHA: ${{ steps.create_pr.outputs.pull_request.head.sha }}"
+    #     echo "Pull Request Branch: ${{ steps.create_pr.outputs.pull_request.head.ref }}"
 
 
