@@ -75,6 +75,6 @@ jobs:
         echo "Pull Request URL: ${{ steps.create_pr.outputs.pull_request.html_url }}"
         echo "Pull Request Operation: ${{ steps.create_pr.outputs.action }}"
         echo "Pull Request Head SHA: ${{ steps.create_pr.outputs.pull_request.head.sha }}"
-        echo "Pull Request Branch: ${{ steps.create_pr.outputs.pull_request.head.ref }}"
+        echo "Pull Request Branch: ${{ steps.create_pr.outputs.pull_request.head.ref }} dummy change"
 
 
