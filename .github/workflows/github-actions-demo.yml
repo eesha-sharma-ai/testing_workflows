@@ -34,18 +34,12 @@ jobs:
         branch_name=${branch_name#refs/heads/}
         echo "branch_name=${branch_name}" >> $GITHUB_ENV
 
-    - name: Extract Commit Author Email
-      id: extract_email
-      run: echo "author_email=$(git log -1 --pretty=format:'%ae')" >> $GITHUB_ENV
-
-    - name: Get GitHub Username from Email
-      id: get_username
+    - name: Extract GitHub Username from Remote URL
+      id: extract_username
       run: |
-        auth_header="Authorization: token ${{ secrets.PAT }}"
-        email="${{ env.author_email }}"
-        response=$(curl -s -H "$auth_header" https://api.github.com/search/users?q=$email+in:email)
-        login=$(echo "$response" | jq -r '.items[0].login')
-        echo "github_username=$login" >> $GITHUB_ENV
+        remote_url=$(git remote get-url origin)
+        username=$(echo "$remote_url" | sed -n 's#.*/\([^/]*\)/.*#\1#p')
+        echo "github_username=$username" >> $GITHUB_ENV
 
     - name: Create a new branch for cherry-picking
       run: |
