@@ -34,9 +34,18 @@ jobs:
         branch_name=${branch_name#refs/heads/}
         echo "branch_name=${branch_name}" >> $GITHUB_ENV
 
-    - name: Extract Commit Author
-      id: extract_author
-      run: echo "commit_author=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
+    - name: Extract Commit Author Email
+      id: extract_email
+      run: echo "author_email=$(git log -1 --pretty=format:'%ae')" >> $GITHUB_ENV
+
+    - name: Get GitHub Username from Email
+      id: get_username
+      run: |
+        auth_header="Authorization: token ${{ secrets.PAT }}"
+        email="${{ env.author_email }}"
+        response=$(curl -s -H "$auth_header" https://api.github.com/search/users?q=$email+in:email)
+        login=$(echo "$response" | jq -r '.items[0].login')
+        echo "github_username=$login" >> $GITHUB_ENV
 
     - name: Create a new branch for cherry-picking
       run: |
@@ -72,6 +81,6 @@ jobs:
           --body "This PR cherry-picks commit ${{ env.commit_sha }} from cherry-pick-${{ env.commit_sha }} into the main branch." \
           --base main \
           --head cherry-pick-${{ env.commit_sha }} \
-          --assignee "${{ env.commit_author }}"
+          --assignee "${{ env.github_username }}"
 
 
