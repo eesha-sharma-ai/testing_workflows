@@ -25,7 +25,10 @@ jobs:
 
     - name: Extract Commit SHA from the push event
       id: get_commit_sha
-      run: echo "commit_sha=${{ github.event.head_commit.id }}" >> $GITHUB_ENV
+      run: |
+        echo "commit_sha=${{ github.event.head_commit.id }}" >> $GITHUB_ENV
+        short_sha=$(git rev-parse --short HEAD)
+        echo "short_commit_sha=$short_sha" >> $GITHUB_ENV
 
     - name: Extract Branch Name
       id: extract_branch_name
@@ -38,7 +41,7 @@ jobs:
       run: |
         git checkout main
         git pull origin main
-        git checkout -b "cherry-pick-${{ env.commit_sha }}"
+        git checkout -b "cherry-pick-${{ env.short_commit_sha }}"
 
     - name: Cherry-pick the commit onto the new branch
       run: |
@@ -53,7 +56,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PAT }}
       run: |
-        git push origin cherry-pick-${{ env.commit_sha }}
+        git push origin cherry-pick-${{ env.short_commit_sha }}
 
     - name: Set up GitHub CLI
       run: sudo apt-get install gh
@@ -64,10 +67,10 @@ jobs:
     - name: Create Pull Request
       run: |
         gh pr create \
-          --title "Cherry-pick commit ${{ env.commit_sha }} to main" \
-          --body "This PR cherry-picks commit ${{ env.commit_sha }} from cherry-pick-${{ env.commit_sha }} into the main branch." \
+          --title "Cherry-pick commit ${{ env.short_commit_sha }} to main" \
+          --body "This PR cherry-picks commit ${{ env.commit_sha }} from cherry-pick-${{ env.short_commit_sha }} into the main branch." \
           --base main \
-          --head cherry-pick-${{ env.commit_sha }} \
+          --head cherry-pick-${{ env.short_commit_sha }} \
           --assignee "${{ github.actor }}"
 
 
