@@ -69,7 +69,6 @@ jobs:
           --body "This PR cherry-picks commit ${{ env.commit_sha }} from cherry-pick-${{ env.commit_sha }} into the main branch." \
           --base main \
           --head cherry-pick-${{ env.commit_sha }} \
-          --label "automated-pr" \
           --draft
 
     # - name: Create Pull Request for the cherry-picked commit
