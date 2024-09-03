@@ -27,13 +27,16 @@ jobs:
       id: get_commit_sha
       run: echo "commit_sha=${{ github.event.head_commit.id }}" >> $GITHUB_ENV
 
-
     - name: Extract Branch Name
       id: extract_branch_name
       run: |
         branch_name=${{ github.ref }}
         branch_name=${branch_name#refs/heads/}
         echo "branch_name=${branch_name}" >> $GITHUB_ENV
+
+    - name: Extract Commit Author
+      id: extract_author
+      run: echo "commit_author=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
 
     - name: Create a new branch for cherry-picking
       run: |
@@ -69,29 +72,6 @@ jobs:
           --body "This PR cherry-picks commit ${{ env.commit_sha }} from cherry-pick-${{ env.commit_sha }} into the main branch." \
           --base main \
           --head cherry-pick-${{ env.commit_sha }} \
-          --draft
-
-    # - name: Create Pull Request for the cherry-picked commit
-    #   id: create_pr
-    #   # uses: peter-evans/create-pull-request@v6
-    #   # with:
-    #   #   token: ${{ secrets.PAT }}
-    #   #   base: main
-    #   #   # branch: main # this is the branch u want to merge the PR INTO
-    #   #   # base: cherry-pick-${{ env.commit_sha }} # its swapped! the base is the branch u want to pr FROM
-    #   #   title: Cherry-pick commit ${{ env.commit_sha }} from ${{ env.branch_name }} to main
-    #   #   commit-message: Cherry pick!
-    #   #   body: |
-    #   #     This PR cherry-picks commit ${{ env.commit_sha }} from ${{ env.branch_name }} into the main branch.
-    #   #   labels: automated-pr
-    #   #   draft: true
-
-    # - name: Output Pull Request URL
-    #   run: |
-    #     echo "Pull Request Number: ${{ steps.create_pr.outputs.pull_request.number }}"
-    #     echo "Pull Request URL: ${{ steps.create_pr.outputs.pull_request.html_url }}"
-    #     echo "Pull Request Operation: ${{ steps.create_pr.outputs.action }}"
-    #     echo "Pull Request Head SHA: ${{ steps.create_pr.outputs.pull_request.head.sha }}"
-    #     echo "Pull Request Branch: ${{ steps.create_pr.outputs.pull_request.head.ref }}"
+          --assignee "${{ env.commit_author }}"
 
 
