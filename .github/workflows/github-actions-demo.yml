@@ -61,7 +61,7 @@ jobs:
       uses: peter-evans/create-pull-request@v6
       with:
         token: ${{ secrets.PAT }}
-        branch: main # this is the branch u want to merge the PR INTO
+        # branch: main # this is the branch u want to merge the PR INTO
         base: cherry-pick-${{ env.commit_sha }} # its swapped! the base is the branch u want to pr FROM
         title: Cherry-pick commit ${{ env.commit_sha }} from ${{ env.branch_name }} to main
         commit-message: Cherry pick!
