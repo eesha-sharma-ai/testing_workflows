@@ -61,8 +61,8 @@ jobs:
       uses: peter-evans/create-pull-request@v6
       with:
         token: ${{ secrets.PAT }}
-        branch: cherry-pick-${{ env.commit_sha }}
-        base: main
+        branch: main
+        base: cherry-pick-${{ env.commit_sha }}
         title: Cherry-pick commit ${{ env.commit_sha }} from ${{ env.branch_name }} to main
         commit-message: Cherry pick!
         body: |
