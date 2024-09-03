@@ -34,13 +34,6 @@ jobs:
         branch_name=${branch_name#refs/heads/}
         echo "branch_name=${branch_name}" >> $GITHUB_ENV
 
-    - name: Extract GitHub Username from Remote URL
-      id: extract_username
-      run: |
-        remote_url=$(git remote get-url origin)
-        username=$(echo "$remote_url" | sed -n 's#.*/\([^/]*\)/.*#\1#p')
-        echo "github_username=$username" >> $GITHUB_ENV
-
     - name: Create a new branch for cherry-picking
       run: |
         git checkout main
@@ -75,6 +68,6 @@ jobs:
           --body "This PR cherry-picks commit ${{ env.commit_sha }} from cherry-pick-${{ env.commit_sha }} into the main branch." \
           --base main \
           --head cherry-pick-${{ env.commit_sha }} \
-          --assignee "${{ env.github_username }}"
+          --assignee "${{ github.actor }}"
 
 
