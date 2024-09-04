@@ -45,7 +45,7 @@ jobs:
 
     - name: Cherry-pick the commit onto the new branch
       run: |
-        git cherry-pick -X theirs ${{ env.commit_sha }} || git cherry-pick --skip
+        git cherry-pick -X theirs -m 1 ${{ env.commit_sha }} || git cherry-pick --skip
 
     - name: Push the new branch to origin
       env:
