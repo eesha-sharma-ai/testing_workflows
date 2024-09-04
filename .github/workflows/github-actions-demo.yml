@@ -44,12 +44,14 @@ jobs:
         git checkout -b "cherry-pick-${{ env.short_commit_sha }}"
 
     - name: Cherry-pick the commit onto the new branch
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT }}
       run: |
         git cherry-pick -X theirs -m 1 ${{ env.commit_sha }} || git cherry-pick --skip
 
     - name: Push the new branch to origin
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT }}
       run: |
         git push origin cherry-pick-${{ env.short_commit_sha }} --verbose
 
