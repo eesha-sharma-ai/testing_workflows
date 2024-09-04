@@ -16,3 +16,4 @@ my own change
 okay this is a change
 
 no conflict
+conflict
