@@ -49,7 +49,7 @@ jobs:
 
     - name: Push the new branch to origin
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT }}
       run: |
         git push origin cherry-pick-${{ env.short_commit_sha }} --verbose
 
