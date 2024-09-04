@@ -48,7 +48,7 @@ jobs:
         git cherry-pick -X theirs -m 1 ${{ env.commit_sha }} || git cherry-pick --skip
 
     - name: Push the new branch to origin
-      with:
+      env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git push origin cherry-pick-${{ env.short_commit_sha }} --verbose
