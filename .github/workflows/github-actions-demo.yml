@@ -45,14 +45,14 @@ jobs:
 
     - name: Cherry-pick the commit onto the new branch
       run: |
-        git cherry-pick -X theirs ${{ env.commit_sha }} || git cherry-pick --skip
+        git cherry-pick -X theirs ${{ env.commit_sha }} --verbose || git cherry-pick --skip
 
     # make the name of the branch a variable
     - name: Push the new branch to origin
       env:
         GITHUB_TOKEN: ${{ secrets.PAT }}
       run: |
-        git push origin cherry-pick-${{ env.short_commit_sha }}
+        git push origin cherry-pick-${{ env.short_commit_sha }} --verbose
 
     - name: Set up GitHub CLI
       run: sudo apt-get install gh
